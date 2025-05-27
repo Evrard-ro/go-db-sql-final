@@ -47,12 +47,11 @@ func TestAddGetDelete(t *testing.T) {
 	// get
 	gotParcel, err := store.Get(lastID)
 	require.NoError(t, err)
-	assert.Equal(t, lastID, gotParcel.Number)
-	assert.Equal(t, parcel.Client, gotParcel.Client)
-	assert.Equal(t, parcel.Status, gotParcel.Status)
-	assert.Equal(t, parcel.Address, gotParcel.Address)
-	assert.Equal(t, parcel.CreatedAt, gotParcel.CreatedAt)
 
+	expectedParcel := parcel
+	expectedParcel.Number = lastID
+
+	assert.Equal(t, expectedParcel, gotParcel)
 	// delete
 	err = store.Delete(lastID)
 	require.NoError(t, err)
@@ -163,11 +162,8 @@ func TestGetByClient(t *testing.T) {
 	// check
 	for _, parcel := range storedParcels {
 		orig, ok := parcelMap[parcel.Number]
-		require.True(t, ok, "parcel not found in map")
-		assert.Equal(t, orig.Client, parcel.Client)
-		assert.Equal(t, orig.Status, parcel.Status)
-		assert.Equal(t, orig.Address, parcel.Address)
-		assert.Equal(t, orig.CreatedAt, parcel.CreatedAt)
+		require.True(t, ok, "Parcel with number %d not found in parcelMap", parcel.Number)
+		assert.Equal(t, orig, parcel)
 		// в parcelMap лежат добавленные посылки, ключ - идентификатор посылки, значение - сама посылка
 		// убедитесь, что все посылки из storedParcels есть в parcelMap
 		// убедитесь, что значения полей полученных посылок заполнены верно

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
+	"os"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -98,8 +100,14 @@ func (s ParcelService) Delete(number int) error {
 
 func main() {
 	// настройте подключение к БД
+	db, err := sql.Open("sqlite", "tracker.db")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer db.Close()
 
-	store := // создайте объект ParcelStore функцией NewParcelStore
+	store := NewParcelStore(db) // создайте объект ParcelStore функцией NewParcelStore
 	service := NewParcelService(store)
 
 	// регистрация посылки
@@ -169,4 +177,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	fmt.Print("Нажмите Enter для продолжения...")
+	reader := bufio.NewReader(os.Stdin)
+	_, _ = reader.ReadString('\n')
 }
